@@ -40,6 +40,7 @@ void setup() {
   SPI.begin();          // Init SPI bus
 
   mfrc522.PCD_Init(); // Init MFRC522 card
+  delay(4);
   mfrc522.PCD_DumpVersionToSerial(); 
   /* read and printout the MFRC522 version (valid values 0x91 & 0x92)*/
   
@@ -65,15 +66,18 @@ void setup() {
   bNewInt = false;
 
   Serial.println(F("End setup"));
+  activateRec(mfrc522);
 }
 
 /**
  * Main loop.
  */
-void loop() {
  
-
-  //activateRec(mfrc522);
+void loop() {
+  
+//  delay(60000); //in cases of problem.
+//  mfrc522.PCD_Init();
+//  activateRec(mfrc522);
 } //loop()
 
 
@@ -93,7 +97,11 @@ void readCard() {
     clearInt(mfrc522);
 }
 
-
+void activateRec(MFRC522 mfrc522) {
+  mfrc522.PCD_WriteRegister(mfrc522.FIFODataReg, mfrc522.PICC_CMD_REQA);
+  mfrc522.PCD_WriteRegister(mfrc522.CommandReg, mfrc522.PCD_Transceive);
+  mfrc522.PCD_WriteRegister(mfrc522.BitFramingReg, 0x87);
+}
 
 /*
  * The function to clear the pending interrupt bits after interrupt serving routine
